@@ -62,11 +62,10 @@
 
 ### **_Future Updates_**
 
-- [x] player can play with X and O
-- [x] show whos turn now
-- [x] have rest button to rest the game
-- [x] the game stop if any of the parties win
-- [ ] tie
+- [ ] Ability for the user purchase from the concession stand.
+- [ ] Ability for the user to interact with customer service.
+- [ ] Ability for ther user to get navigation direcitons.
+- [ ] Ability for the user to get AI movie recomendations.
 
 ---
 
