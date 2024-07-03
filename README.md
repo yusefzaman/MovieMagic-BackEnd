@@ -56,7 +56,9 @@
 
 ---
 
-### Wireframe
+### Our Progress can be see on our Trello Board
+
+[LINK](https://trello.com/b/Rf23bv94/movie-inspector)
 
 ---
 
