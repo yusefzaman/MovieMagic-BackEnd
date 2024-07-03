@@ -1,2 +1,2 @@
-# Project-4---BackEnd
+# MovieMagic
 BackEnd for a Cinema booking website
