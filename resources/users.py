@@ -7,7 +7,7 @@ from models.db import db
 class Users(Resource):
     def get(self):
         users=User.find_all() #get all the information from the user table
-        return [u.json() for u in users]# return the user as json
+        return [u.json() for u in users],200# return the user as json
     def post(self):
         data=request.get_json()#return thre requested data as json
         user=User(**data)#like the spreed operator since we will increase the number of elments
@@ -22,6 +22,10 @@ class UserDetails(Resource):
         for k in data.keys():
             user[k]=data[k]
         db.session.commit()
-        return user.json()
-  
+        return user.json(),200
+    def delete(self,user_id):
+        user_id=User.find_by_id(user_id)
+        if not user:
+            return {'message':"no such user with this id."},404
+       
         
