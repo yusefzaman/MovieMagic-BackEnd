@@ -1,5 +1,7 @@
 # MovieMagic
 
+![](https://media3.giphy.com/media/dtCLggdynuSp8D9HxD/giphy.gif?cid=6c09b952bwfong6c39khqtciixuqnlq2o1snhx5xyojouvkw&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s)
+
 ### By:
 
 #### Yusef Zaman
