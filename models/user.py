@@ -1,5 +1,5 @@
+import uuid
 from datetime import datetime
-from flask import request
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -8,19 +8,19 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = 'users'
     
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()))
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    password_digest = db.Column(db.String(255), nullable=False)  # Store the hashed password
-    image = db.Column(db.String(255), nullable=True)  # URL or path to the user's image
-    admin = db.Column(db.Boolean, default=False, nullable=False)  # boolean to track the type of the user
+    password_digest = db.Column(db.String(255), nullable=False)
+    image = db.Column(db.String(255), nullable=True)
+    admin = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, onupdate=datetime.utcnow)
 
     def __init__(self, name, email, password, image=None, admin=False):
         self.name = name
         self.email = email
-        self.password_digest = generate_password_hash(password)#hash the password
+        self.password_digest = generate_password_hash(password)
         self.image = image
         self.admin = admin
 
@@ -42,40 +42,34 @@ class User(db.Model):
     
     @classmethod
     def find_all(cls):
-        return User.query.all()
+        return cls.query.all()
 
     @classmethod
     def find_by_id(cls, id):
-        user = User.query.get(id)
+        user = cls.query.get(id)
         if user is None:
-            return {"message":"there is no user with such ID"}, 404
-        return user
+            return {"message": f"User with id {id} not found"}, 404
+        return user, 200
 
     @classmethod
-    def update_user(cls, id):
-        user = User.query.get(id)
+    def update_user(cls, id, data):
+        user = cls.query.get(id)
         if user is None:
-            return {"message":"cannot update user with such ID, becuase its undefiend."}, 404
-        data = request.get_json()
-        user.email = data.get('email', user.email)
-        user.name = data.get('name', user.name)
-        if 'password' in data:
-            user.password_digest = generate_password_hash(data['password'])
-        user.image = data.get('image', user.image)
-        user.admin = data.get('admin', user.admin)
+            return {"message":"there is no such user with such ID"}, 404
+        for key in data.keys():
+            setattr(user, key, data[key])
         db.session.commit()
-        return user.json()
+        return user.json(), 200
 
     @classmethod
     def delete_user(cls, id):
-        user = User.query.get(id)
+        user = cls.query.get(id)
         if user is None:
-            return {"message": f"User with id {id} not found"}, 404
+            return {"message": "user with such ID is underfiend."}, 404
         db.session.delete(user)
         db.session.commit()
-        return {'message': 'User Deleted'}, 204
-    
+        return {"message": "User deleted"}, 204
+
     def verify_password(self, password):
         return check_password_hash(self.password_digest, password)
 
-  
