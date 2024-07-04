@@ -30,6 +30,7 @@ class User(db.Model):
             "email": self.email,
             "image": self.image,
             "admin": self.admin,
+            "password_digest":self.password_digest,
             "created_at": str(self.created_at),
             "updated_at": str(self.updated_at)
         }
@@ -47,14 +48,14 @@ class User(db.Model):
     def find_by_id(cls, id):
         user = cls.query.get(id)
         if user is None:
-            return {"message": f"User with id {id} not found"}, 404
+            return {"message":"no such user with this IF"}, 404
         return user, 200
 
     @classmethod
     def update_user(cls, id, data):
         user = cls.query.get(id)
         if user is None:
-            return {"message":"there is no such user with such ID"}, 404
+            return {"message":"there is no such user with such ID, so you cant update"}, 404
         for key in data.keys():
             setattr(user, key, data[key])
         db.session.commit()
