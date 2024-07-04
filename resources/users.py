@@ -27,5 +27,7 @@ class UserDetails(Resource):
         user_id=User.find_by_id(user_id)
         if not user:
             return {'message':"no such user with this id."},404
-       
+        session.delete(user)
+        db.session.commit()
+        return {"message":"User deleted","paylod":user_id}
         
