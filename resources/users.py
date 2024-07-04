@@ -26,6 +26,6 @@ class UserDetails(Resource):
     def delete(self,user_id):
         user_id=User.find_by_id(user_id)
         if not user:
-            return {'message':"no such user with this id."},404
+            """ return {'message':"no such user with this id."},404 """
        
         
