@@ -19,6 +19,18 @@ def add_movie():
     theatre = theatre.query.get(theatre_id)
     if not theatre:
         return jsonify({'success': False, 'message': 'Invalid theatre ID'}), 400
+    
+    movie = Movie(id=id, name=name, img=img, genre=genre, theatre_id=theatre_id)
+    
+    db.session.add(movie)
+    db.session.commit()
+
+
+    return jsonify({'success': True, 'message': 'Movie added successfully'})
+
+# @movie_bp.route('/fetch_and_add_movie/<external_movie_id>', methods=['POST'])
+# def fetch_and_add_movie(external_movie_id):
+#     response = requests.get(f"{###}/{external_movie_id}")
 
 
 

@@ -2,7 +2,7 @@ from app import db
 
 class Theatre(db.Model):
     id = db.Column(db.String, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(80), nullable=False)
     
     
     def __init__(self, id, name, location):
