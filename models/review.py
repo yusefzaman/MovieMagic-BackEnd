@@ -1,7 +1,6 @@
-from db import db
+from models.db import db
 from datetime import datetime
-from models.user import User
-from models.movie import Movie
+import uuid
 
 
 class Review(db.Model):
