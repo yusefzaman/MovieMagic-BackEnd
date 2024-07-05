@@ -2,6 +2,7 @@ from flask import request, jsonify
 from flask_restful import Resource
 from models.review import Review
 from models.db import db
+from flask_jwt_extended import jwt_required
 
 
 class Reviews(Resource):
