@@ -1,8 +1,9 @@
-# app.py
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-from models.db import db
+from flask_migrate import Migrate  # Import Flask-Migrate
+
+from models.db import db  # Import database configuration
 from resources.users import Users, UserDetails
 from resources.auth import Register, Login
 from resources.movie import movie_bp
@@ -21,9 +22,8 @@ app.config["JWT_SECRET_KEY"] = "your_jwt_secret_key"  # Change this in productio
 db.init_app(app)
 jwt = JWTManager(app)
 
-# Create database tables
-with app.app_context():
-    db.create_all()
+# Create Migrate instance
+migrate = Migrate(app, db)  # Create the Migrate instance
 
 # Initialize API
 api = Api(app)

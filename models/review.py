@@ -1,6 +1,6 @@
 from models.db import db
 from datetime import datetime
-from uuid import uuid
+from uuid import uuid4
 
 
 class Review(db.Model):
