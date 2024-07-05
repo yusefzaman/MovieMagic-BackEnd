@@ -6,6 +6,7 @@ from models.db import db
 from resources.users import Users, UserDetails
 from resources.auth import Register, Login
 from resources.movie import movie_bp
+from resources.reviews import Reviews, ReviewDetails
 
 app = Flask(__name__)
 
@@ -33,6 +34,8 @@ api.add_resource(UserDetails, "/users/<uuid:id>")
 api.add_resource(Register, "/register")
 api.add_resource(Login, "/login")
 app.register_blueprint(movie_bp, url_prefix="/movies")
+api.add_resource(Reviews, "/reviews")
+api.add_resource(ReviewDetails, "/reviews/<int:review_id>")
 
 if __name__ == "__main__":
     app.run(debug=True)

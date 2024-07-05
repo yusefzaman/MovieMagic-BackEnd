@@ -23,3 +23,11 @@ class Reviews(Resource):
         db.session.commit()
 
         return jsonify({"message": "Review created successfully"}), 201
+
+    class ReviewDetails(Resource):
+        def get(self, review_id):
+            review = Review.query.get(review_id)
+            if not review:
+                return jsonify({"message": "Review not found"}), 404
+
+            return jsonify(review.to_dict()), 200
