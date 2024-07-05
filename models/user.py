@@ -1,28 +1,39 @@
-from flask import request
+import uuid
 from datetime import datetime
 from models.db import db
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    email = db.Column(db.String(255))
-    password = db.Column(db.String(255))
+    
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()))
+    name = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password_digest = db.Column(db.String(255), nullable=False)
+    image = db.Column(db.String(255), nullable=True)
+    admin = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, onupdate=datetime.now())
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, onupdate=datetime.utcnow)
 
-    def __init__(self, name, email, password):
+    def __init__(self, name, email, password, image=None, admin=False):
         self.name = name
         self.email = email
-        self.password = password
+        self.password_digest = generate_password_hash(password)
+        self.image = image
+        self.admin = admin
 
     def json(self):
-        return {"id": self.id,
+        return {
+            "id": self.id,
             "name": self.name,
             "email": self.email,
-            "password": self.password,
+            "image": self.image,
+            "admin": self.admin,
+            "password_digest":self.password_digest,
             "created_at": str(self.created_at),
-            "updated_at": str(self.updated_at)}
+            "updated_at": str(self.updated_at)
+        }
     
     def create(self):
         db.session.add(self)
@@ -31,25 +42,34 @@ class User(db.Model):
     
     @classmethod
     def find_all(cls):
-        return User.query.all()
+        return cls.query.all()
 
     @classmethod
     def find_by_id(cls, id):
-        return db.get_or_404(cls, id, description=f'Record with id:{id} is not available')
-    
+        user = cls.query.get(id)
+        if user is None:
+            return {"message":"no such user with this IF"}, 404
+        return user, 200
+
     @classmethod
-    def update_user(cls, id):
-        user = db.get_or_404(cls, id, description=f'Record with id:{id} is not available')
-        data = request.get_json()
-        user.email = data['email']
-        user.name = data['name']
-        user.password = data['password']
+    def update_user(cls, id, data):
+        user = cls.query.get(id)
+        if user is None:
+            return {"message":"there is no such user with such ID, so you cant update"}, 404
+        for key in data.keys():
+            setattr(user, key, data[key])
         db.session.commit()
-        return user.json()
+        return user.json(), 200
 
     @classmethod
     def delete_user(cls, id):
-        user = db.get_or_404(cls, id, description=f'Record with id:{id} is not available')
+        user = cls.query.get(id)
+        if user is None:
+            return {"message": "user with such ID is underfiend."}, 404
         db.session.delete(user)
         db.session.commit()
-        return {'message': 'User Deleted'}, 204
+        return {"message": "User deleted"}, 204
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_digest, password)
+
