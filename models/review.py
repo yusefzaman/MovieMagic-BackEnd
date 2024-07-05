@@ -29,5 +29,7 @@ class Review(db.Model):
             "rating": self.rating,
             "created_at": str(self.created_at),
             "user": (self.user.to_dict() if self.user else None),
-            "movie": (self.movie.to_dict() if self.movie else None),
+            "movie": (
+                self.movie.to_dict() if self.movie else None
+            ),  # using ternory if the movie exist convert it into dic else dont
         }
