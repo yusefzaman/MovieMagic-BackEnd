@@ -18,9 +18,9 @@ class Movie(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'name': self.name,
-            'img': self.img,
-            'genre': self.genre,
-            'theatre_id': self.theatre_id
+            "id": self.id,
+            "name": self.name,
+            "img": self.img,
+            "genre": self.genre,
+            "theatre_id": self.theatre_id,
         }
