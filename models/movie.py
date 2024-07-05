@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from models.db import db
 
-db = SQLAlchemy()
 
 class Movie(db.Model):
     id = db.Column(db.String, primary_key=True)
