@@ -21,3 +21,13 @@ class Review(db.Model):
         self.rating = rating
         self.user_id = user_id
         self.movie_id = movie_id
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "content": self.content,
+            "rating": self.rating,
+            "created_at": str(self.created_at),
+            "user": (self.user.to_dict() if self.user else None),
+            "movie": (self.movie.to_dict() if self.movie else None),
+        }
