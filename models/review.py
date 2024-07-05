@@ -4,6 +4,7 @@ from uuid import uuid4
 
 
 class Review(db.Model):
+    __tablename__ = "review"
     id = db.Column(db.String(50), primary_key=True)
     content = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
