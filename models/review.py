@@ -15,3 +15,9 @@ class Review(db.Model):
 
     movie_id = db.Column(db.Integer, db.ForeignKey("movies.id"), nullable=False)
     movie = db.relationship("Movie", back_populates="reviews")
+
+    def __init__(self, content, rating, user_id, movie_id):
+        self.content = content
+        self.rating = rating
+        self.user_id = user_id
+        self.movie_id = movie_id
