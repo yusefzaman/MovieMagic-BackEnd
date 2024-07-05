@@ -12,10 +12,13 @@ from resources.reviews import Reviews, ReviewDetails
 app = Flask(__name__)
 
 # Configuration
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     "postgresql://hussain:admin@localhost:5432/magicinspector"
 )
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+app.config["SQLALCHEMY_ECHO"] = True
 app.config["JWT_SECRET_KEY"] = "your_jwt_secret_key"  # Change this in production
 
 # Initialize Flask extensions
