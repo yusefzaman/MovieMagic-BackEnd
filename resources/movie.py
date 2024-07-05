@@ -67,7 +67,7 @@ def fetch_and_add_movies():
         movie = Movie(id=id, name=name, img=img, genre=genre, theatre_id=theatre_id)
         db.session.add(movie)
 
-    db.session.commit()  # to prevent unexcepted actions
+    db.session.commit()  # to prevent unexcepted behaviour
 
     return jsonify(
         {
