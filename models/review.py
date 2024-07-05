@@ -1,10 +1,10 @@
 from models.db import db
 from datetime import datetime
-import uuid
+from uuid import uuid
 
 
 class Review(db.Model):
-    id = db.Column(db.String, primary_key=True)
+    id = db.Column(db.String(50), primary_key=True)
     content = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -23,7 +23,7 @@ class Review(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id,
+            "id": str(uuid.uuid4().hex),
             "content": self.content,
             "rating": self.rating,
             "created_at": str(self.created_at),
