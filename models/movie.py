@@ -7,14 +7,14 @@ class Movie(db.Model):
     name = db.Column(db.String(255), nullable=False)
     img = db.Column(db.String, nullable=False)
     genre = db.Column(db.String, nullable=False)
-    theatre_ids = db.Column(db.PickleType, nullable=False)
+    theatre_id = db.Column(db.PickleType, nullable=False)
 
-    def __init__(self, id, name, img, genre, theatre_ids):
+    def __init__(self, id, name, img, genre, theatre_id):
         self.id = id
         self.name = name
         self.img = img
         self.genre = genre
-        self.theatre_ids = theatre_ids
+        self.theatre_id = theatre_id
 
     def to_dict(self):
         return {
@@ -22,5 +22,5 @@ class Movie(db.Model):
             'name': self.name,
             'img': self.img,
             'genre': self.genre,
-            'theatre_ids': self.theatre_ids
+            'theatre_id': self.theatre_id
         }
