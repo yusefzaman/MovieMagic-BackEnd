@@ -17,4 +17,13 @@ def add_ticket():
 
     db.session.add(ticket)
     db.session.commit()
+
+    return jsonify({'success': True, 'message': 'Ticket added successfully'})
+
+@ticket_bp.route('/get_tickets', methods=['GET'])
+def get_tickets():
+    tickets = Ticket.query.all()
+    tickets_data = [ticket.to_dict() for ticket in tickets]
+    return jsonify(tickets_data)
+
     
