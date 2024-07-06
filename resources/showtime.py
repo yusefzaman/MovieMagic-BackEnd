@@ -68,3 +68,12 @@ def reserve_seats(showtime_id):
         available_seats[seat] = True
 
     return jsonify({'success': True, 'message': 'Seats reserved successfully'})    
+
+
+@showtime_bp.route('/available_seats/<showtime_id>', methods=['GET'])
+def available_seats(showtime_id):
+    showtime = Showtime.query.get(showtime_id)
+    if not showtime:
+        return jsonify({'success': False, 'message': 'Showtime not found'}), 404
+
+    return jsonify(showtime.seats)
