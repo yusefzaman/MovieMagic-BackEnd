@@ -13,3 +13,12 @@ class Showtime(db.Model):
         self.seats = seats
         self.time = time
         self.price = price
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'theatre_id': self.theatre_id,
+            'seats': self.seats,
+            'time': self.time,
+            'price': self.price
+        }    
