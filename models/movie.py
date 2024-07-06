@@ -1,8 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
+from models.db import db
 
-db = SQLAlchemy()
 
 class Movie(db.Model):
+    __tablename__ = "movie"
     id = db.Column(db.String, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     img = db.Column(db.String, nullable=False)
@@ -18,9 +19,9 @@ class Movie(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'name': self.name,
-            'img': self.img,
-            'genre': self.genre,
-            'theatre_id': self.theatre_id
+            "id": self.id,
+            "name": self.name,
+            "img": self.img,
+            "genre": self.genre,
+            "theatre_id": self.theatre_id,
         }
