@@ -52,3 +52,16 @@ def reserve_seats(showtime_id):
 
     if not seats_to_reserve:
         return jsonify({'success': False, 'message': 'No seats to reserve provided'}), 400
+    
+
+    if any(seat < 0 or seat >= 60 for seat in seats_to_reserve):
+        return jsonify({'success': False, 'message': 'Seat index out of range'}), 400
+    
+    available_seats = showtime.seats
+
+
+    for seat in seats_to_reserve:
+        if available_seats[seat]:
+            return jsonify({'success': False, 'message': f'Seat {seat} is already reserved'}), 400
+        
+    
