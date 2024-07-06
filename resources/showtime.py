@@ -64,4 +64,7 @@ def reserve_seats(showtime_id):
         if available_seats[seat]:
             return jsonify({'success': False, 'message': f'Seat {seat} is already reserved'}), 400
         
-    
+    for seat in seats_to_reserve:
+        available_seats[seat] = True
+
+    return jsonify({'success': True, 'message': 'Seats reserved successfully'})    
