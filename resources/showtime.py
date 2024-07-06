@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models.showtime import Showtime, db
-
+from datetime import datetime
 
 showtime_bp = Blueprint('showtime_bp', __name__)
 
@@ -13,9 +13,14 @@ def add_showtime():
     time = data.get('time')
     price = data.get('price')
 
-    if not (id and theatre_id and seats and time and price):
+    if not (id and theatre_id and time and price):
         return jsonify({'success': False, 'message': 'All fields are required'}), 400
-    showtime = Showtime(id=id, theatre_id=theatre_id, seats=seats, time=time, price=price)
+    
+    
+    time = datetime.strptime(time, '%Y-%m-%dT%H:%M:%S')
+    
+    
+    showtime = Showtime(id=id, theatre_id=theatre_id, time=time, price=price)
 
     db.session.add(showtime)
     db.session.commit()
