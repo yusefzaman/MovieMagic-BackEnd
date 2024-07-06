@@ -10,7 +10,7 @@ class Showtime(db.Model):
     def __init__(self, id, theatre_id, seats, time, price):
         self.id = id
         self.theatre_id = theatre_id
-        self.seats = seats
+        self.seats = seats if seats is not None else [False] * 60
         self.time = time
         self.price = price
 
