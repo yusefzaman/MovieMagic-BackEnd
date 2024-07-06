@@ -40,3 +40,15 @@ def get_showtime(showtime_id):
         return jsonify({'success': False, 'message': 'Showtime not found'}), 404
 
     return jsonify(showtime.to_dict())
+
+@showtime_bp.route('/reserve_seats/<showtime_id>', methods=['POST'])
+def reserve_seats(showtime_id):
+    showtime = Showtime.query.get(showtime_id)
+    if not showtime:
+        return jsonify({'success': False, 'message': 'Showtime not found'}), 404
+    
+    data = request.json
+    seats_to_reserve = data.get('seats')
+
+    if not seats_to_reserve:
+        return jsonify({'success': False, 'message': 'No seats to reserve provided'}), 400
