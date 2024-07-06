@@ -21,3 +21,17 @@ def add_showtime():
     db.session.commit()
 
     return jsonify({'success': True, 'message': 'Showtime added successfully'})
+
+@showtime_bp.route('/get_showtimes', methods=['GET'])
+def get_showtimes():
+    showtimes = Showtime.query.all()
+    showtimes_data = [showtime.to_dict() for showtime in showtimes]
+    return jsonify(showtimes_data)
+
+@showtime_bp.route('/get_showtime/<showtime_id>', methods=['GET'])
+def get_showtime(showtime_id):
+    showtime = Showtime.query.get(showtime_id)
+    if not showtime:
+        return jsonify({'success': False, 'message': 'Showtime not found'}), 404
+
+    return jsonify(showtime.to_dict())
