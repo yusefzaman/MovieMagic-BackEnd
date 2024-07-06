@@ -26,4 +26,12 @@ def get_tickets():
     tickets_data = [ticket.to_dict() for ticket in tickets]
     return jsonify(tickets_data)
 
+@ticket_bp.route('/get_ticket/<ticket_id>', methods=['GET'])
+def get_ticket(ticket_id):
+    ticket = Ticket.query.get(ticket_id)
+    if not ticket:
+        return jsonify({'success': False, 'message': 'Ticket not found'}), 404
+
+    return jsonify(ticket.to_dict())
+
     
