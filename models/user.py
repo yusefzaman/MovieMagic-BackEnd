@@ -6,7 +6,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
     __tablename__ = "users"
-
     id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()))
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
@@ -51,7 +50,7 @@ class User(db.Model):
     def find_by_id(cls, id):
         user = cls.query.get(id)
         if user is None:
-            return {"message": "no such user with this IF"}, 404
+            return {"message": "no such user with this ID"}, 404
         return user, 200
 
     @classmethod
@@ -59,7 +58,7 @@ class User(db.Model):
         user = cls.query.get(id)
         if user is None:
             return {
-                "message": "there is no such user with such ID, so you cant update"
+                "message": "there is no such user with such ID, so you can't update"
             }, 404
         for key in data.keys():
             setattr(user, key, data[key])
@@ -70,7 +69,7 @@ class User(db.Model):
     def delete_user(cls, id):
         user = cls.query.get(id)
         if user is None:
-            return {"message": "user with such ID is underfiend."}, 404
+            return {"message": "user with such ID is not found."}, 404
         db.session.delete(user)
         db.session.commit()
         return {"message": "User deleted"}, 204
