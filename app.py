@@ -36,7 +36,7 @@ api.add_resource(Users, "/users")
 api.add_resource(UserDetails, "/users/<uuid:id>")
 api.add_resource(Register, "/register")
 api.add_resource(Login, "/login")
-app.register_blueprint(movie_bp, url_prefix="/movies")
+app.register_blueprint(movie_bp, url_prefix="")
 api.add_resource(Reviews, "/reviews")
 api.add_resource(ReviewDetails, "/reviews/<string:review_id>")
 
