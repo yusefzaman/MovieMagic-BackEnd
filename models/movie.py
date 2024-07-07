@@ -9,6 +9,9 @@ class Movie(db.Model):
     img = db.Column(db.String, nullable=False)
     genre = db.Column(db.String, nullable=False)
     theatre_id = db.Column(db.PickleType, nullable=False)
+    reviews = db.relationship(
+        "Review", back_populates="movie", cascade="all, delete-orphan"
+    )
 
     def __init__(self, id, name, img, genre, theatre_id):
         self.id = id
