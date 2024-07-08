@@ -11,13 +11,13 @@ from resources.movie import movie_bp
 from resources.reviews import Reviews, ReviewDetails
 
 app = Flask(__name__)
-CORS(app) 
+CORS(app)
 
 # Configuration
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "postgresql://mohdhu:admin@localhost:5432/magicinspector"
+    "postgresql://hussain:admin@localhost:5432/magicinspector"
 )
 
 app.config["SQLALCHEMY_ECHO"] = True
