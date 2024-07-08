@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from models.theatre import Theatre, db
 
 theatre_bp = Blueprint("theatre_bp", __name__)
+API_URL = "https://serpapi.com/search.json?[…]+boys+theater&location=Austin,+Texas,+United+States&hl=en&gl=us"
 
 
 @theatre_bp.route("/add_theatre", methods=["POST"])
