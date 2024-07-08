@@ -9,7 +9,7 @@ from resources.users import Users, UserDetails
 from resources.auth import Register, Login
 from resources.movie import movie_bp
 from resources.reviews import Reviews, ReviewDetails
-
+from resources.theatre import theatre_bp
 app = Flask(__name__)
 CORS(app)
 
@@ -17,7 +17,7 @@ CORS(app)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "postgresql://hussain:admin@localhost:5432/magicinspector"
+    "postgresql://mohdhu:admin@localhost:5432/magicinspector"
 )
 
 app.config["SQLALCHEMY_ECHO"] = True
@@ -38,6 +38,7 @@ api.add_resource(Users, "/users")
 api.add_resource(UserDetails, "/users/<uuid:id>")
 api.add_resource(Register, "/register")
 api.add_resource(Login, "/login")
+app.register_blueprint(theatre_bp, url_pref="")
 app.register_blueprint(movie_bp, url_prefix="")
 api.add_resource(Reviews, "/reviews")
 api.add_resource(ReviewDetails, "/reviews/<string:review_id>")
