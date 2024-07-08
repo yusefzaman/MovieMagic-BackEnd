@@ -8,6 +8,7 @@ movie_bp = Blueprint("movie_bp", __name__)
 API_URL = "https://api.themoviedb.org/3/discover/movie"
 API_KEY = "abbef35f11cad16e5640f14b9057e4d1"
 
+
 @movie_bp.route("/add_movie", methods=["POST"])  # for adding movies manualy
 def add_movie():
     data = request.json
@@ -88,3 +89,40 @@ def get_movies_by_theatre(theatre_id):
     movies = Movie.query.filter_by(theatre_id=theatre_id).all()
     movies_data = [movie.to_dict() for movie in movies]
     return jsonify(movies_data)
+
+
+@movie_bp.route("/edit_movie/<string:id>", methods=["PUT"])
+def edit_movie(id):
+    data = request.json
+    name = data.get("name")
+    img = data.get("img")
+    genre = data.get("genre")
+    theatre_id = data.get("theatre_id")
+
+    if not (name and img and genre and theatre_id):
+        return jsonify({"success": False, "message": "All fields are required"}), 400
+
+    movie = Movie.query.get(id)
+    if not movie:
+        return jsonify({"success": False, "message": "Movie not found"}), 404
+
+    movie.name = name
+    movie.img = img
+    movie.genre = genre
+    movie.theatre_id = theatre_id
+
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Movie updated successfully"})
+
+
+@movie_bp.route("/delete_movie/<string:id>", methods=["DELETE"])
+def delete_movie(id):
+    movie = Movie.query.get(id)
+    if not movie:
+        return jsonify({"success": False, "message": "Movie not found"}), 404
+
+    db.session.delete(movie)
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Movie deleted successfully"})
