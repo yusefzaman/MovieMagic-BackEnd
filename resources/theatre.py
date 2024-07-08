@@ -3,7 +3,7 @@ from models.theatre import Theatre, db
 
 theatre_bp = Blueprint("theatre_bp", __name__)
 API_URL = "https://serpapi.com/search.json?[…]+boys+theater&location=Austin,+Texas,+United+States&hl=en&gl=us"
-
+API_KEY = "3327939e08bff45a40f8eb2b50929cb5e52bdb33f4"
 
 @theatre_bp.route("/add_theatre", methods=["POST"])
 def add_theatre():
