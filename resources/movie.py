@@ -8,7 +8,6 @@ movie_bp = Blueprint("movie_bp", __name__)
 API_URL = "https://api.themoviedb.org/3/discover/movie"
 API_KEY = "abbef35f11cad16e5640f14b9057e4d1"
 
-
 @movie_bp.route("/add_movie", methods=["POST"])  # for adding movies manualy
 def add_movie():
     data = request.json
@@ -56,7 +55,7 @@ def fetch_and_add_movies():
         id = str(movie_data.get("id"))
         name = movie_data.get("title")
         img = f"https://image.tmdb.org/t/p/w500{movie_data.get('poster_path')}"
-        genre = ", ".join([genre["name"] for genre in movie_data.get("genre_ids", [])])
+        # genre = ", ".join([genre["name"] for genre in movie_data.get("genre_ids", [])])
         theatre_id = None
 
         existing_movie = Movie.query.filter_by(id=id).first()
@@ -64,7 +63,7 @@ def fetch_and_add_movies():
             continue
 
         # Create a new Movie object and add it to the database
-        movie = Movie(id=id, name=name, img=img, genre=genre, theatre_id=theatre_id)
+        movie = Movie(id=id, name=name, img=img, genre="Comedy", theatre_id=theatre_id)
         db.session.add(movie)
 
     db.session.commit()  # to prevent unexcepted behaviour
