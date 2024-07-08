@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
     __tablename__ = "users"
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()))
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_digest = db.Column(db.String(255), nullable=False)
