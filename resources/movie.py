@@ -56,7 +56,7 @@ def fetch_and_add_movies():
         id = str(movie_data.get("id"))
         name = movie_data.get("title")
         img = f"https://image.tmdb.org/t/p/w500{movie_data.get('poster_path')}"
-        genre = ", ".join([genre["name"] for genre in movie_data.get("genre_ids", [])])
+        # genre = ", ".join([genre["name"] for genre in movie_data.get("genre_ids", [])])
         theatre_id = None
 
         existing_movie = Movie.query.filter_by(id=id).first()
