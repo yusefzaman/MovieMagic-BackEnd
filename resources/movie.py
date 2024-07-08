@@ -2,6 +2,8 @@ import requests
 from flask import Blueprint, request, jsonify
 from models.movie import Movie, db
 from models.theatre import Theatre
+from models.user import User
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 movie_bp = Blueprint("movie_bp", __name__)
 
@@ -10,7 +12,14 @@ API_KEY = "abbef35f11cad16e5640f14b9057e4d1"
 
 
 @movie_bp.route("/add_movie", methods=["POST"])  # for adding movies manualy
+@jwt_required()
 def add_movie():
+    current_user_id = get_jwt_identity()  # Get the logged-in user's ID
+    current_user = User.query.get(current_user_id)  # Get the logged-in user
+
+    if not current_user or not current_user.admin:
+        return jsonify({"success": False, "message": "Admin access required"}), 403
+
     data = request.json
     id = data.get("id")
     name = data.get("name")
