@@ -91,38 +91,45 @@ def get_movies_by_theatre(theatre_id):
     return jsonify(movies_data)
 
 
-@movie_bp.route("/edit_movie/<string:id>", methods=["PUT"])
-def edit_movie(id):
-    data = request.json
-    name = data.get("name")
-    img = data.get("img")
-    genre = data.get("genre")
-    theatre_id = data.get("theatre_id")
+@movie_bp.route("/remove_movie/<string:movie_id>", methods=["DELETE"])
+@jwt_required()
+def remove_movie(movie_id):
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
 
-    if not (name and img and genre and theatre_id):
-        return jsonify({"success": False, "message": "All fields are required"}), 400
+    if not current_user.admin:
+        return jsonify({"success": False, "message": "Admin access required"}), 403
 
-    movie = Movie.query.get(id)
-    if not movie:
-        return jsonify({"success": False, "message": "Movie not found"}), 404
-
-    movie.name = name
-    movie.img = img
-    movie.genre = genre
-    movie.theatre_id = theatre_id
-
-    db.session.commit()
-
-    return jsonify({"success": True, "message": "Movie updated successfully"})
-
-
-@movie_bp.route("/delete_movie/<string:id>", methods=["DELETE"])
-def delete_movie(id):
-    movie = Movie.query.get(id)
+    movie = Movie.query.get(movie_id)
     if not movie:
         return jsonify({"success": False, "message": "Movie not found"}), 404
 
     db.session.delete(movie)
     db.session.commit()
 
-    return jsonify({"success": True, "message": "Movie deleted successfully"})
+    return jsonify({"success": True, "message": "Movie deleted successfully"}), 200
+
+
+@movie_bp.route("/edit_movie/<string:movie_id>", methods=["PUT"])
+@jwt_required()
+def edit_movie(movie_id):
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+
+    if not current_user.admin:
+        return jsonify({"success": False, "message": "Admin access required"}), 403
+
+    data = request.json
+    movie = Movie.query.get(movie_id)
+
+    if not movie:
+        return jsonify({"success": False, "message": "Movie not found"}), 404
+
+    movie.name = data.get("name", movie.name)
+    movie.img = data.get("img", movie.img)
+    movie.genre = data.get("genre", movie.genre)
+    movie.theatre_id = data.get("theatre_id", movie.theatre_id)
+
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Movie updated successfully"}), 200
