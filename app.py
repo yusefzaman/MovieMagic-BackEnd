@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate  # Import Flask-Migrate
@@ -10,12 +11,13 @@ from resources.movie import movie_bp
 from resources.reviews import Reviews, ReviewDetails
 
 app = Flask(__name__)
+CORS(app) 
 
 # Configuration
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "postgresql://hussain:admin@localhost:5432/magicinspector"
+    "postgresql://mohdhu:admin@localhost:5432/magicinspector"
 )
 
 app.config["SQLALCHEMY_ECHO"] = True

@@ -8,7 +8,7 @@ class Movie(db.Model):
     name = db.Column(db.String(255), nullable=False)
     img = db.Column(db.String, nullable=False)
     genre = db.Column(db.String, nullable=False)
-    theatre_id = db.Column(db.PickleType, nullable=False)
+    theatre_id = db.Column(db.PickleType, nullable=True)
     reviews = db.relationship(
         "Review", back_populates="movie", cascade="all, delete-orphan"
     )
