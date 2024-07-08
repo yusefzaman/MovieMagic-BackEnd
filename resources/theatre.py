@@ -13,10 +13,12 @@ def add_theatre():
     data = request.json
     name = data.get("name")
     location = data.get("location")
+    day = data.get("day")
+    time = data.get("time")
     if not (id and name):
         return jsonify({"success": False, "message": "ID and Name are required"}), 400
 
-    theatre = Theatre(name=name, location=location)
+    theatre = Theatre(name=name, location=location, time=time, day=day)
 
     db.session.add(theatre)
     db.session.commit()
@@ -39,24 +41,21 @@ def fetch_and_add_theatres():
 
     print(response.json())
     print("=======================================")
-    theatres_data = response.json().get("showtimes", [])[0].get("theaters", [])
-    print('theatres_data ==> ')
+    theatres_data = response.json().get("showtimes", [])[0].get("theaters", []).get("showing", [])[0].get("time", [])
     print( json.dumps(theatres_data, indent=4) )
     for theatre_data in theatres_data:
         name = theatre_data.get("name")
         location = theatre_data.get("address")
-        # img = f"https://image.tmdb.org/t/p/w500{theatre_data.get('poster_path')}"
-        # genre = ", ".join([genre["name"] for genre in theatre_data.get("genre_ids", [])])
-        # theatre_id = None
-
+        time = theatre_data.get("time")
         existing_theatre = Theatre.query.filter_by(name=name).first()
+       
         if existing_theatre:
             print("Theatre exists!")
             continue
 
         # Create a new theatre object and add it to the database
         print("Creating theatre...")
-        theatre = Theatre(name=name, location=location)
+        theatre = Theatre(name=name, location=location, time=time)
         db.session.add(theatre)
         db.session.commit()
         # to prevent unexcepted behaviour
