@@ -41,12 +41,12 @@ def fetch_and_add_theatres():
 
     print(response.json())
     print("=======================================")
-    theatres_data = response.json().get("showtimes", [])[0].get("theaters", []).get("showing", [])[0].get("time", [])
+    theatres_data = response.json().get("showtimes", [])[0].get("theaters", [])
     print( json.dumps(theatres_data, indent=4) )
     for theatre_data in theatres_data:
         name = theatre_data.get("name")
         location = theatre_data.get("address")
-        time = theatre_data.get("time")
+        time = theatre_data.get("showing")[0].get("time", [])
         existing_theatre = Theatre.query.filter_by(name=name).first()
        
         if existing_theatre:
