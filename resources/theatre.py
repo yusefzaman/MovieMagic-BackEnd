@@ -26,11 +26,17 @@ def add_theatre():
     return jsonify({"success": True, "message": "Theatre added successfully", "id": theatre.id})
 
 @theatre_bp.route(
-    "/fetch_theatres", methods=["GET"]
+    "/fetch_theatres", methods=["POST"]
 )  # for adding theatres from the api to the database
 def fetch_and_add_theatres():
-    # data = request.json
+    data = request.json
+    payload['q'] = data.get("movieName") + " theaters"
+    print(' ')
+    print(' ')
+    print(payload.get('q'))
     response = requests.get(API_URL, params=payload)
+    print(' ')
+    print(response)
     if response.status_code != 200:
         return (
             jsonify(
@@ -39,16 +45,17 @@ def fetch_and_add_theatres():
             response.status_code,
         )
 
-    print(response.json())
+    # print(response.json())
     print("=======================================")
     theatres_data = response.json().get("showtimes", [])[0].get("theaters", [])
     print( json.dumps(theatres_data, indent=4) )
+    theaters = []
     for theatre_data in theatres_data:
         name = theatre_data.get("name")
         location = theatre_data.get("address")
         time = theatre_data.get("showing")[0].get("time", [])
         existing_theatre = Theatre.query.filter_by(name=name).first()
-       
+        theaters.append({"name":name, "location":location, "time":time})
         if existing_theatre:
             print("Theatre exists!")
             continue
@@ -56,14 +63,18 @@ def fetch_and_add_theatres():
         # Create a new theatre object and add it to the database
         print("Creating theatre...")
         theatre = Theatre(name=name, location=location, time=time)
+        
         db.session.add(theatre)
         db.session.commit()
         # to prevent unexcepted behaviour
-
+    # return theater data
+    
+    # theaters = [ for t in theatres_data]
     return jsonify(
         {
             "success": True,
             "message": "theatres fetched from TMDb API and added successfully",
+            "data": theaters
         }
     )
 

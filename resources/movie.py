@@ -41,7 +41,6 @@ def add_movie():
 
     return jsonify({"success": True, "message": "Movie added successfully"})
 
-
 @movie_bp.route(
     "/fetch_movies", methods=["POST"]
 )  # for adding movies from the api to the database
@@ -85,13 +84,11 @@ def fetch_and_add_movies():
         }
     )
 
-
 @movie_bp.route("/movies", methods=["GET"])
 def get_movies():
     movies = Movie.query.all()
     movies_data = [movie.to_dict() for movie in movies]
     return jsonify(movies_data)
-
 
 @movie_bp.route("/movies_by_theatre/<string:theatre_id>", methods=["GET"])
 def get_movies_by_theatre(theatre_id):
@@ -99,7 +96,12 @@ def get_movies_by_theatre(theatre_id):
     movies_data = [movie.to_dict() for movie in movies]
     return jsonify(movies_data)
 
-
+@movie_bp.route("/movies/<string:name>", methods=["GET"])
+def get_movie_by_name(name):
+    movies = Movie.query.filter_by(name=name)
+    movies_data = [movie.to_dict() for movie in movies]
+    return jsonify(movies_data)
+   
 @movie_bp.route("/remove_movie/<string:movie_id>", methods=["DELETE"])
 @jwt_required()
 def remove_movie(movie_id):
@@ -117,7 +119,6 @@ def remove_movie(movie_id):
     db.session.commit()
 
     return jsonify({"success": True, "message": "Movie deleted successfully"}), 200
-
 
 @movie_bp.route("/edit_movie/<string:movie_id>", methods=["PUT"])
 @jwt_required()
