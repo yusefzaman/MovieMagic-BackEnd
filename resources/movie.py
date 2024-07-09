@@ -9,6 +9,7 @@ movie_bp = Blueprint("movie_bp", __name__)
 
 API_URL = "https://api.themoviedb.org/3/discover/movie"
 API_KEY = "abbef35f11cad16e5640f14b9057e4d1"
+GENRE_URL = "https://api.themoviedb.org/3/genre/movie/list"
 
 
 @movie_bp.route("/add_movie", methods=["POST"])  # for adding movies manualy
@@ -41,20 +42,27 @@ def add_movie():
 
     return jsonify({"success": True, "message": "Movie added successfully"})
 
-@movie_bp.route(
-    "/fetch_movies", methods=["POST"]
-)  # for adding movies from the api to the database
+@movie_bp.route("/fetch_movies", methods=["POST"])
 def fetch_and_add_movies():
     data = request.json
     page_number = data.get("page_number", 1)  # Default to page 1 if not provided
 
-    response = requests.get(API_URL, params={"api_key": API_KEY, "page": page_number})
+    # Fetch genres from TMDb API
+    genre_response = requests.get(GENRE_URL, params={"api_key": API_KEY})
+    if genre_response.status_code != 200:
+        return (
+            jsonify({"success": False, "message": "Failed to fetch genres from TMDb API"}),
+            genre_response.status_code,
+        )
 
+    genre_data = genre_response.json().get("genres", [])
+    genre_map = {genre["id"]: genre["name"] for genre in genre_data}
+
+    # Fetch movies from TMDb API
+    response = requests.get(API_URL, params={"api_key": API_KEY, "page": page_number})
     if response.status_code != 200:
         return (
-            jsonify(
-                {"success": False, "message": "Failed to fetch data from external API"}
-            ),
+            jsonify({"success": False, "message": "Failed to fetch data from external API"}),
             response.status_code,
         )
 
@@ -64,18 +72,21 @@ def fetch_and_add_movies():
         id = str(movie_data.get("id"))
         name = movie_data.get("title")
         img = f"https://image.tmdb.org/t/p/w500{movie_data.get('poster_path')}"
-        # genre = ", ".join([genre["name"] for genre in movie_data.get("genre_ids", [])])
+        genre_ids = movie_data.get("genre_ids", [])
         theatre_id = None
 
         existing_movie = Movie.query.filter_by(id=id).first()
         if existing_movie:
             continue
 
+        # Map genre IDs to genre names
+        genres = [genre_map.get(genre_id) for genre_id in genre_ids if genre_map.get(genre_id)]
+
         # Create a new Movie object and add it to the database
-        movie = Movie(id=id, name=name, img=img, genre="Comedy", theatre_id=theatre_id)
+        movie = Movie(id=id, name=name, img=img, genre=", ".join(genres), theatre_id=theatre_id)
         db.session.add(movie)
 
-    db.session.commit()  # to prevent unexcepted behaviour
+    db.session.commit()
 
     return jsonify(
         {
