@@ -2,14 +2,24 @@ import requests
 from flask import Blueprint, request, jsonify
 from models.movie import Movie, db
 from models.theatre import Theatre
+from models.user import User
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 movie_bp = Blueprint("movie_bp", __name__)
 
 API_URL = "https://api.themoviedb.org/3/discover/movie"
 API_KEY = "abbef35f11cad16e5640f14b9057e4d1"
 
+
 @movie_bp.route("/add_movie", methods=["POST"])  # for adding movies manualy
+@jwt_required()
 def add_movie():
+    current_user_id = get_jwt_identity()  # Get the logged-in user's ID
+    current_user = User.query.get(current_user_id)  # Get the logged-in user
+
+    if not current_user or not current_user.admin:
+        return jsonify({"success": False, "message": "Admin access required"}), 403
+
     data = request.json
     id = data.get("id")
     name = data.get("name")
@@ -88,3 +98,47 @@ def get_movies_by_theatre(theatre_id):
     movies = Movie.query.filter_by(theatre_id=theatre_id).all()
     movies_data = [movie.to_dict() for movie in movies]
     return jsonify(movies_data)
+
+
+@movie_bp.route("/remove_movie/<string:movie_id>", methods=["DELETE"])
+@jwt_required()
+def remove_movie(movie_id):
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+
+    if not current_user.admin:
+        return jsonify({"success": False, "message": "Admin access required"}), 403
+
+    movie = Movie.query.get(movie_id)
+    if not movie:
+        return jsonify({"success": False, "message": "Movie not found"}), 404
+
+    db.session.delete(movie)
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Movie deleted successfully"}), 200
+
+
+@movie_bp.route("/edit_movie/<string:movie_id>", methods=["PUT"])
+@jwt_required()
+def edit_movie(movie_id):
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+
+    if not current_user.admin:
+        return jsonify({"success": False, "message": "Admin access required"}), 403
+
+    data = request.json
+    movie = Movie.query.get(movie_id)
+
+    if not movie:
+        return jsonify({"success": False, "message": "Movie not found"}), 404
+
+    movie.name = data.get("name", movie.name)
+    movie.img = data.get("img", movie.img)
+    movie.genre = data.get("genre", movie.genre)
+    movie.theatre_id = data.get("theatre_id", movie.theatre_id)
+
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Movie updated successfully"}), 200
