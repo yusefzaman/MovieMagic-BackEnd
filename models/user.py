@@ -21,7 +21,7 @@ class User(db.Model):
     def __init__(self, name, email, password, image=None, admin=False):
         self.name = name
         self.email = email
-        self.password_digest = generate_password_hash(password)
+        self.password_digest = password
         self.image = image
         self.admin = admin
 

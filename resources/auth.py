@@ -20,12 +20,13 @@ class Register(Resource):
         db.session.commit()
         return {"message": "User created successfully"}, 201
 
+
 class Login(Resource):
     def post(self):
         data = request.get_json()
         if not data or "email" not in data or "password" not in data:
             return {"message": "Invalid request, missing email or password"}, 400
-        
+
         email = data["email"]
         password = data["password"]
 
@@ -41,7 +42,10 @@ class Login(Resource):
         # Step 3: Print user details if found
         print(f"User found: {user}")
         print(f"Stored password hash: {user.password_digest}")
-        print(f"entered password:{password}")
+        print(f"entered password: {password}")
+
+        hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
+        print(f"entered hash password:{hashed_password}")
 
         # Step 4: Check if password matches
         password_matches = check_password_hash(user.password_digest, password)
