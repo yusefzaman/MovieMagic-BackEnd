@@ -12,13 +12,14 @@ from resources.reviews import Reviews, ReviewDetails
 from resources.theatre import theatre_bp
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 # Configuration
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "postgresql://hussain:admin@localhost:5432/magicinspector"
+    "postgresql://localhost:5432/magicinspector"
 )
 
 app.config["SQLALCHEMY_ECHO"] = True
@@ -36,7 +37,7 @@ api = Api(app)
 
 # API Routes
 api.add_resource(Users, "/users")
-api.add_resource(UserDetails, "/users/<uuid:id>")
+api.add_resource(UserDetails, "/users/getDetails")
 api.add_resource(Register, "/register")
 api.add_resource(Login, "/signin")
 app.register_blueprint(theatre_bp, url_pref="")

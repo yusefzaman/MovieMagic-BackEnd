@@ -21,13 +21,10 @@ class Users(Resource):
 
 class UserDetails(Resource):
     @jwt_required()
-    def get(self, id):
+    def get(self):
         current_user_id = get_jwt_identity()
-        if str(current_user_id) != id:
-            return {"message": "Unauthorized access to this user details"}, 403
-
-        user, status = User.find_by_id(id)
-        return user, status
+        user, status = User.find_by_id(current_user_id)
+        return user.json(), status
 
     @jwt_required()
     def put(self, id):
