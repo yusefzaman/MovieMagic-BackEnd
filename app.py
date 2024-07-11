@@ -19,7 +19,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "postgresql://localhost:5432/magicinspector"
+    "postgresql://ghazialsardeeh:admin@localhost:5432/magicinspector"
 )
 
 app.config["SQLALCHEMY_ECHO"] = True
