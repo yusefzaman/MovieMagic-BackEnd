@@ -30,33 +30,19 @@ class Login(Resource):
         email = data["email"]
         password = data["password"]
 
-        # Step 1: Print received login data
-        print(f"Received login data: {data}")
-
-        # Step 2: Query user by email
+        # Step 1: Query user by email
         user = User.query.filter_by(email=email).first()
         if not user:
-            print("User not found.")
-            return {"message": "Invalid credentials"}, 401
+            return {"message": "No such user with this email"}, 401
 
-        # Step 3: Print user details if found
-        print(f"User found: {user}")
-        print(f"Stored password hash: {user.password_digest}")
-        print(f"entered password: {password}")
-
-        hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
-        print(f"entered hash password:{hashed_password}")
-
-        # Step 4: Check if password matches
-        password_matches = check_password_hash(user.password_digest, password)
+        # Step 2: Check if password matches
+        password_matches = user.verify_password(password)
 
         if not password_matches:
-            print("Invalid password.")
             return {"message": "Invalid credentials"}, 401
 
-        # Step 5: Password is correct, generate access token
+        # Step 3: Password is correct, generate access token
         access_token = create_access_token(identity=user.id)
-        print(f"Generated token: {access_token}")
 
-        # Step 6: Return successful login response
+        # Step 4: Return successful login response
         return {"access_token": access_token}, 200

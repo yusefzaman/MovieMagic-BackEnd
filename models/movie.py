@@ -28,3 +28,18 @@ class Movie(db.Model):
             "genre": self.genre,
             "theatre_id": self.theatre_id,
         }
+
+    def update(self, name=None, img=None, genre=None, theatre_id=None):
+        if name:
+            self.name = name
+        if img:
+            self.img = img
+        if genre:
+            self.genre = genre
+        if theatre_id:
+            self.theatre_id = theatre_id
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
