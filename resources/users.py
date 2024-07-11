@@ -18,6 +18,25 @@ class Users(Resource):
         user.create()
         return user.json(), 201
 
+    @jwt_required()
+    def put(self, id):
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(current_user_id)
+
+        if not current_user.admin:
+            return {"message": "Unauthorized to perform this action"}, 403
+
+        user, status = User.find_by_id(id)
+        if status == 404:
+            return user, status
+
+        data = request.get_json()
+        if "admin" in data:
+            user.admin = data["admin"]
+            db.session.commit()
+
+        return user.json(), 200
+
 
 class UserDetails(Resource):
     @jwt_required()
@@ -27,17 +46,26 @@ class UserDetails(Resource):
         return user.json(), status
 
     @jwt_required()
-    def put(self, id):
+    def put(self, email):
         current_user_id = get_jwt_identity()
-        if str(current_user_id) != id:
+
+        # Find user by email
+        user = User.find_by_email(email)
+        if not user:
+            return {"message": "User not found"}, 404
+
+        # Check if the current user is authorized to update
+        if str(current_user_id) != str(user.id):
             return {"message": "Unauthorized to update this user"}, 403
 
-        data = request.get_json()
-        user, status = User.find_by_id(id)
-        if status == 404:
-            return user, status
-        user, status = User.update_user(id, data)
-        return user, status
+        try:
+            # Update admin status to True
+            user.admin = True
+            user.save()  # Assuming you have a method like save() to commit changes
+
+            return {"message": "Admin status updated successfully"}, 200
+        except Exception as e:
+            return {"message": f"Failed to update admin status: {str(e)}"}, 500
 
     @jwt_required()
     def delete(self, id):
@@ -49,3 +77,27 @@ class UserDetails(Resource):
         if status == 404:
             return user, status
         return User.delete_user(id)
+
+
+class MakeAdmin(Resource):
+    @jwt_required()
+    def put(self, email):
+        current_user_id = get_jwt_identity()
+
+        # Find user by email
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return {"message": "User not found"}, 404
+
+        # Check if the current user is authorized to update
+        if str(current_user_id) != str(user.id):
+            return {"message": "Unauthorized to update this user"}, 403
+
+        try:
+            # Update admin status to True
+            user.admin = True
+            user.save()
+
+            return {"message": "Admin status updated successfully"}, 200
+        except Exception as e:
+            return {"message": f"Failed to update admin status: {str(e)}"}, 500
