@@ -1,6 +1,7 @@
 from models.db import db
 from datetime import datetime
 from uuid import uuid4
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 class Review(db.Model):
