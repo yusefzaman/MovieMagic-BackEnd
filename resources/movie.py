@@ -42,6 +42,7 @@ def add_movie():
 
     return jsonify({"success": True, "message": "Movie added successfully"})
 
+
 @movie_bp.route("/fetch_movies", methods=["POST"])
 def fetch_and_add_movies():
     data = request.json
@@ -51,7 +52,9 @@ def fetch_and_add_movies():
     genre_response = requests.get(GENRE_URL, params={"api_key": API_KEY})
     if genre_response.status_code != 200:
         return (
-            jsonify({"success": False, "message": "Failed to fetch genres from TMDb API"}),
+            jsonify(
+                {"success": False, "message": "Failed to fetch genres from TMDb API"}
+            ),
             genre_response.status_code,
         )
 
@@ -62,7 +65,9 @@ def fetch_and_add_movies():
     response = requests.get(API_URL, params={"api_key": API_KEY, "page": page_number})
     if response.status_code != 200:
         return (
-            jsonify({"success": False, "message": "Failed to fetch data from external API"}),
+            jsonify(
+                {"success": False, "message": "Failed to fetch data from external API"}
+            ),
             response.status_code,
         )
 
@@ -80,10 +85,14 @@ def fetch_and_add_movies():
             continue
 
         # Map genre IDs to genre names
-        genres = [genre_map.get(genre_id) for genre_id in genre_ids if genre_map.get(genre_id)]
+        genres = [
+            genre_map.get(genre_id) for genre_id in genre_ids if genre_map.get(genre_id)
+        ]
 
         # Create a new Movie object and add it to the database
-        movie = Movie(id=id, name=name, img=img, genre=", ".join(genres), theatre_id=theatre_id)
+        movie = Movie(
+            id=id, name=name, img=img, genre=", ".join(genres), theatre_id=theatre_id
+        )
         db.session.add(movie)
 
     db.session.commit()
@@ -95,11 +104,13 @@ def fetch_and_add_movies():
         }
     )
 
+
 @movie_bp.route("/movies", methods=["GET"])
 def get_movies():
     movies = Movie.query.all()
     movies_data = [movie.to_dict() for movie in movies]
     return jsonify(movies_data)
+
 
 @movie_bp.route("/movies_by_theatre/<string:theatre_id>", methods=["GET"])
 def get_movies_by_theatre(theatre_id):
@@ -107,12 +118,14 @@ def get_movies_by_theatre(theatre_id):
     movies_data = [movie.to_dict() for movie in movies]
     return jsonify(movies_data)
 
+
 @movie_bp.route("/movies/<string:name>", methods=["GET"])
 def get_movie_by_name(name):
     movies = Movie.query.filter_by(name=name)
     movies_data = [movie.to_dict() for movie in movies]
     return jsonify(movies_data)
-   
+
+
 @movie_bp.route("/remove_movie/<string:movie_id>", methods=["DELETE"])
 @jwt_required()
 def remove_movie(movie_id):
@@ -130,6 +143,7 @@ def remove_movie(movie_id):
     db.session.commit()
 
     return jsonify({"success": True, "message": "Movie deleted successfully"}), 200
+
 
 @movie_bp.route("/edit_movie/<string:movie_id>", methods=["PUT"])
 @jwt_required()
